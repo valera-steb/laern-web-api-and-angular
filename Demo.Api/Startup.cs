@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Autofac;
 using Demo.Domain.Model;
+using Demo.Domain.User;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -36,7 +37,12 @@ namespace Demo.Api
         // Configure Autofac. Called after ConfigureServices()
         public void ConfigureContainer(ContainerBuilder builder)
         {
+            //TODO: нужно проверить корректен ли подход - задача: убрать зависимость от ModelContext-а
+            //builder
+            //    .Register(ctx => ctx.Resolve<ModelContext>())
+            //    .As<IModelContext>();
 
+            builder.RegisterType<UserService>().AsImplementedInterfaces();
         }
 
 

@@ -1,0 +1,51 @@
+и так - как создать базу?
+
+.прописать модель:
+	.дто объекты:
+		.User 1-n UsersTask n-1 Task.
+		.в каждом (кроме UsersTask) есть свойство Id.
+
+		.User 1-n UsersTask
+			.User: ICollection<UsersTask> UsersTasks.
+			.UsersTask: Guid UserId - недеюсь это соединит
+
+	.репозитории под каждое дто.
+
+	+ а как связи задать в модели?
+		http://www.entityframeworktutorial.net/code-first/configure-one-to-many-relationship-in-code-first.aspx
+		.есть соглашения именования.
+		.есть FluentApi.
+
+
+.настроить подключение к базе:
+	.нужно настроить DI - он встроен в ASP NET:
+		https://docs.microsoft.com/en-us/ef/core/miscellaneous/connection-strings
+		https://docs.microsoft.com/en-us/aspnet/core/tutorials/first-mvc-app-xplat/working-with-sql
+
+	+ в последней версии добавили Conforming Container:
+		.немного теории:
+			http://blog.ploeh.dk/2014/05/19/conforming-container/
+
+		.реализация asp net + autofac:
+			http://autofaccn.readthedocs.io/en/latest/integration/aspnetcore.html#quick-start-with-configurecontainer
+
+
+.активировать миграции:
+	https://docs.microsoft.com/en-us/aspnet/mvc/overview/getting-started/getting-started-with-ef-using-mvc/migrations-and-deployment-with-the-entity-framework-in-an-asp-net-mvc-application
+
+	Add-Migration -Name "Init" -OutputDir "Model/Migrations" -Project "Demo.Domain" -StartUpProject "Demo.Api"
+	update-database
+
+	.в корне Demo.Api должен появиться файл DemoContext.db - к которому можно подключиться как к SQLite базе данных, например с помощью database:
+		http://fishcodelib.com/database.htm
+
+	Add-Migration -Name "InitData" -Project "Demo.Domain"
+	+ добавить вставку начальных данных.
+	+ проблема с доступом к контексту в миграции - EF такое не позволяет - заставляет в виде SQL всё делать.
+		=> плохой обход - создать контекст руками.
+
++ как удалять миграции?
+	.первую:
+		Remove-Migration -Project "Demo.Domain" -StartUpProject "Demo.Api"
+
+	.созданную но не зафиксированную (без update-database) кажется можно просто Remove-Migration.
